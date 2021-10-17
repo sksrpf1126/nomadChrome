@@ -9,6 +9,9 @@ const loginForm = document.querySelector('#login-form')
 //로그인 폼의 자식들을 찾는 방법 2 (더 간단)
 const loginInput = document.querySelector('#login-form input')
 //const loginButton = document.querySelector('#login-form button') form태그를 이용하면서 필요 없어짐
+const greeting = document.querySelector('#greeting')
+const HIDDEN_CLASSNAME = 'hidden' // hidden을 반복적으로 사용하므로, 유지보수를 위하여 변수 선언
+const USERNAME_KEY = 'userName'
 
 //loginButton.addEventListener('click', onLoginBtnClick)
 function onLoginBtnClick() {
@@ -25,7 +28,24 @@ function onLoginBtnClick() {
 //엔터를 누르거나 submit속성의 input태그나, button을 눌를 때 동작
 function onLoginSubmit(event) {
   event.preventDefault() //기본동작 제거(submit 이후 새로고침 되는 동작 포함)
+  loginForm.classList.add(HIDDEN_CLASSNAME)
   const userName = loginInput.value
+  localStorage.setItem(USERNAME_KEY, userName)
+  paintGreetings(userName)
 }
 
-loginForm.addEventListener('submit', onLoginSubmit)
+const paintGreetings = (userName) => {
+  greeting.innerText = `Hello ${userName}`
+  greeting.classList.remove(HIDDEN_CLASSNAME)
+}
+
+const savedUserName = localStorage.getItem(USERNAME_KEY)
+
+if (savedUserName === null) {
+  //show the form
+  loginForm.classList.remove(HIDDEN_CLASSNAME)
+  loginForm.addEventListener('submit', onLoginSubmit)
+} else {
+  //show the greeting
+  paintGreetings(savedUserName)
+}
